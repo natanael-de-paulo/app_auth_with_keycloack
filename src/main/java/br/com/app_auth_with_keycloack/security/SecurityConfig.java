@@ -19,7 +19,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(new JWTConverter())))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

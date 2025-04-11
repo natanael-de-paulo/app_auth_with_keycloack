@@ -1,5 +1,6 @@
 package br.com.app_auth_with_keycloack.controller;
 import br.com.app_auth_with_keycloack.dto.AuthUserRequest;
+import br.com.app_auth_with_keycloack.interfaces.IAuthService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,23 +16,17 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private final IAuthService authService;
 
-    @PostMapping("/")
+    public AuthController(IAuthService authService) {
+        this.authService = authService;
+    }
+
+    @PostMapping
     public ResponseEntity<?> auth(@RequestBody AuthUserRequest user) {
-        HttpHeaders headers = new HttpHeaders();
-        RestTemplate restTemplate = new RestTemplate();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("client_id", user.clientId());
-        formData.add("username", user.user());
-        formData.add("password", user.password());
-        formData.add("grant_type", user.grantType());
 
-
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(formData, headers);
-
-        var result = restTemplate.postForEntity("http://localhost:8080/realms/youtube/protocol/openid-connect/token", entity, String.class);
-        return ResponseEntity.ok().body(result.getBody());
+        String token = authService.authenticate(user);
+        return ResponseEntity.ok().body(token);
     };
 
 }
