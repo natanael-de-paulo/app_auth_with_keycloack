@@ -24,7 +24,6 @@ public class AuthController {
 
     @PostMapping
     public ResponseEntity<?> auth(@RequestBody AuthUserRequest user) {
-
         String token = authService.authenticate(user);
         return ResponseEntity.ok().body(token);
     };
